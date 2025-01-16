@@ -1,0 +1,18 @@
+# Ignore Python cache files
+_pycache_/
+*.pyc
+
+# Ignore virtual environment folder
+env/
+energy_predict_env/
+
+# Ignore model file
+model/energy_model.pkl
+
+# Ignore Jupyter Notebook checkpoints
+.notebook-checkpoints/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
