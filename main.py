@@ -4,22 +4,23 @@ import os
 
 app = Flask(__name__)
 
-# Path to the trained model
+# Define the path to the trained model
 MODEL_PATH = os.path.join('model', 'energy_model.pkl')
 
-# Define expected features manually
-expected_features = ['temperature', 'population', 'gdp', 'biofuel_cons_change_pct']
+# Manually define the expected features (must match training)
+# Only using the 4 features, we used in the training
+expected_features = ['year', 'gdp_per_capita', 'population', 'energy_per_capita']
 
 # Load the trained model
 try:
     model = joblib.load(MODEL_PATH)
-    print(f"Model loaded successfully.")
+    print("Model loaded successfully.")
 except FileNotFoundError:
     model = None
     print(f"Error: Model file not found at {MODEL_PATH}")
-except AttributeError:
+except Exception as e:
     model = None
-    print("Error: Could not retrieve feature names from the model. Check model compatibility.")
+    print(f"Error loading model: {str(e)}")
 
 @app.route('/')
 def home():
@@ -39,9 +40,10 @@ def predict():
 
     Expected JSON format:
     {
-        "temperature": float,
+        "year": float,
+        "gdp_per_capita": float,
         "population": float,
-        "gdp": float
+        "energy_per_capita": float
     }
     """
     if model is None:
@@ -51,21 +53,18 @@ def predict():
     if not data:
         return jsonify({"error": "No input data provided"}), 400
 
-    # Check if all required features are provided
+    # Check for missing required features
     missing_features = [feature for feature in expected_features if feature not in data]
     if missing_features:
         return jsonify({"error": f"Missing features: {', '.join(missing_features)}"}), 400
 
     try:
-        # Extract and order features according to the model’s expected input
+        # Order features as expected by the model
         features = [[float(data[feature]) for feature in expected_features]]
         prediction = model.predict(features)
-        
-        # ensure prediction is a standard python float (and not numpy float32)
+        # Convert prediction to native float to ensure JSON serializability
         prediction_value = float(prediction[0])
-        
         return jsonify({"predicted_energy_consumption": prediction_value})
-
     except ValueError as e:
         return jsonify({"error": f"Invalid input data: {str(e)}"}), 400
 

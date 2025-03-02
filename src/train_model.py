@@ -14,10 +14,14 @@ data_path = "data/processed_world_energy_consumption.csv"
 df = pd.read_csv(data_path)
 
 # Define the target variable and selected features
+# Da wir den Datensatz nicht weiter manipulieren, wählen wir nur vorhandene, sinnvolle Features.
 target = "energy_cons_change_pct"
-features = ["year", "gdp_per_capita", "population", "energy_per_capita"]
+features = ["year", "gdp_per_capita", "population", "energy_per_capita", "energy_intensity"]
+# Falls fossil_share berechnet wurde, könnte man es auch hinzufügen:
+if 'fossil_share' in df.columns:
+    features.append("fossil_share")
 
-# Visualize the distribution of the target variable
+# Visualize the distribution of the target variable before transformation
 plt.hist(df[target], bins=30)
 plt.title(f'Distribution of {target}')
 plt.xlabel(target)
@@ -40,11 +44,11 @@ sns.heatmap(correlations, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Correlation Matrix")
 plt.show()
 
-# Check for missing values
+# Check for missing values in the dataset
 print("Missing values per feature:")
 print(df.isnull().sum())
 
-# Visualize feature-target relationships
+# Visualize relationships between each feature and the target variable
 for feature in features:
     plt.scatter(df[feature], df[target])
     plt.title(f'{feature} vs {target}')
@@ -52,15 +56,15 @@ for feature in features:
     plt.ylabel(target)
     plt.show()
 
-# Prepare feature matrix (X) and target variable (y)
+# Prepare the feature matrix (X) and target vector (y)
 X = df[features]
 y = df[target]
 
-# Standardize feature values to improve model performance
+# Standardize the features to improve model performance
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Display feature and target statistics
+# Print basic statistics for verification
 print(f"Target mean: {y.mean()}, Target std: {y.std()}")
 print(f"Feature means: {X.mean()}, Feature std: {X.std()}")
 
@@ -70,7 +74,7 @@ X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, 
 # Initialize the XGBoost regressor
 xgb_model = xgb.XGBRegressor(objective="reg:squarederror", random_state=42)
 
-# Define hyperparameter grid for optimization
+# Define a hyperparameter grid for optimization
 param_grid = {
     "max_depth": [3, 5, 7],
     "learning_rate": [0.01, 0.1, 0.2],
@@ -84,7 +88,7 @@ grid_search.fit(X_train, y_train)
 # Retrieve the best-performing model
 best_model = grid_search.best_estimator_
 
-# Generate predictions using the test dataset
+# Generate predictions on the test dataset
 y_pred = best_model.predict(X_test)
 
 # Evaluate model performance using multiple metrics
@@ -105,7 +109,6 @@ plt.show()
 # Save the trained model for future inference
 model_dir = "model"
 os.makedirs(model_dir, exist_ok=True)
-
 model_path = os.path.join(model_dir, "energy_model.pkl")
 with open(model_path, "wb") as model_file:
     pickle.dump(best_model, model_file)
