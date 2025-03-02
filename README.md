@@ -1,6 +1,6 @@
 ﻿# Energy Consumption Prediction
 
-This project predicts energy consumption based on the time of day and temperature using machine learning techniques. The model is trained on a dataset containing historical energy consumption data, and the prediction is based on two main features: hour of the day and temperature.
+This project aims to predict energy consumption based on the time of day and temperature using machine learning techniques. The model is trained on historical energy consumption data and predicts based on two main features: the hour of the day and temperature.
 
 ## Table of Contents
 
@@ -13,16 +13,16 @@ This project predicts energy consumption based on the time of day and temperatur
 
 ## Project Description
 
-The goal of this project is to develop a machine learning model that predicts energy consumption based on the time of day and temperature. The model is trained on a dataset containing historical energy usage data and is stored in a pickle file for easy deployment.
+The goal of this project is to develop a machine learning model that predicts energy consumption based on the time of day and temperature. The model is trained on a dataset containing historical energy usage data, which is used to predict future consumption. The model is stored in a pickle file for easy deployment.
 
-The model is built using Python, Pandas, Scikit-Learn, and other related libraries. The code follows a clean structure that separates data processing, model training, and prediction logic.
+The code structure separates data processing, model training, and prediction, following best practices for machine learning workflows.
 
 ## Features
 
-- *Machine Learning Model*: A regression model trained to predict energy consumption.
-- *Data Processing*: Data preprocessing to clean and prepare the dataset.
-- *Model Saving*: The trained model is saved as a .pkl file for later use.
-- *Energy Prediction*: The model can be used to predict energy consumption based on hourly time and temperature.
+- *Machine Learning Model*: A regression model trained to predict energy consumption based on time of day and temperature.
+- *Data Processing*: Includes preprocessing steps to clean and prepare the dataset.
+- *Model Saving*: The trained model is saved as a .pkl file for easy reuse.
+- *Energy Prediction*: The model can be used to make predictions based on user input.
 
 ## Installation
 
@@ -51,11 +51,9 @@ source energy_predict_env/bin/activate  # On Windows, use energy_predict_env\Scr
 pip install -r requirements.txt
 
 
-	4.	Make sure that the dataset (energy_consumption.csv) is placed in the data folder.
+	4.	Ensure the dataset (energy_consumption.csv) is placed in the data folder.
 
 Usage
-
-Once the environment is set up, you can train the model and use it for predictions.
 
 Training the Model
 
@@ -67,7 +65,7 @@ This will train the model on the dataset and save it as energy_model.pkl in the 
 
 Making Predictions
 
-Once the model is trained, you can use the following code to make predictions:
+Once the model is trained, use the following code to make predictions:
 
 import pandas as pd
 from app import predict_energy_consumption
@@ -87,7 +85,7 @@ predictions = predict_energy_consumption(input_data)
 # Print the predictions
 print(predictions)
 
-This code imports the prediction function from the app folder, prepares input data, and outputs energy consumption predictions.
+This code imports the prediction function, prepares the input data, and outputs energy consumption predictions.
 
 Directory Structure
 
